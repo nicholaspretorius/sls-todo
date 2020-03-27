@@ -23,7 +23,7 @@ export async function createTodo(todo: CreateTodoRequest, jwtToken: string): Pro
         name: todo.name,
         dueDate: todo.dueDate,
         done: false,
-        attachmentUrl: ""
+        attachmentUrl: "test"
     });
 }
 

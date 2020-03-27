@@ -17,7 +17,7 @@ export async function createTodo(todo: CreateTodoRequest, jwtToken: string): Pro
     const userId = parseUserId(jwtToken);
 
     return await todosAccess.createTodo({
-        todoId,
+        id: todoId,
         userId,
         createdAt: new Date().toISOString(),
         name: todo.name,

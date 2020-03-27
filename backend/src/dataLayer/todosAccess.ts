@@ -9,18 +9,24 @@ import { TodoItem } from "./../models/TodoItem";
 
 const XAWS = AWSXRay.captureAWS(AWS);
 const logger = createLogger("todosAccess");
+const todosIndex = process.env.TODOS_USERID_INDEX;
 
 export class TodoAccess {
 
     constructor(
         private readonly docClient: DocumentClient = createDynamoDBClient(),
-        private readonly todosTable = process.env.TODOS_TABLE
+        private readonly todosTable = process.env.TODOS_TABLE,
     ) { }
 
-    async getTodos(): Promise<TodoItem[]> {
+    async getTodos(userId: string): Promise<TodoItem[]> {
 
-        const result = await this.docClient.scan({
-            TableName: this.todosTable
+        const result = await this.docClient.query({
+            TableName: this.todosTable,
+            IndexName: todosIndex,
+            KeyConditionExpression: "userId = :userId",
+            ExpressionAttributeValues: {
+                ":userId": userId
+            }
         }).promise();
 
         const todos = result.Items;

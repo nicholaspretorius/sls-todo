@@ -14,7 +14,11 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
     event
   });
 
-  const todos = await getTodos();
+  const authorization = event.headers.Authorization;
+  const split = authorization.split(" ");
+  const jwtToken = split[1];
+
+  const todos = await getTodos(jwtToken);
 
   return {
     statusCode: 200,

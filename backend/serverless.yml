@@ -69,6 +69,7 @@ functions:
       - http:
           method: post
           path: todos
+          cors: true
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -83,6 +84,7 @@ functions:
       - http:
           method: patch
           path: todos/{todoId}
+          cors: true
 
   # TODO: Configure this function
   DeleteTodo:
@@ -91,6 +93,7 @@ functions:
       - http:
           method: delete
           path: todos/{todoId}
+          cors: true
 
   # TODO: Configure this function
   GenerateUploadUrl:
@@ -99,6 +102,7 @@ functions:
       - http:
           method: post
           path: todos/{todoId}/attachment
+          cors: true
 
 resources:
   Resources:

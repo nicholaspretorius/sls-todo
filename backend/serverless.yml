@@ -13,8 +13,8 @@ custom:
     includeModules: true
 
 # package dependencies per function
-package:
-  individually: true
+# package:
+#   individually: true
 
 provider:
   name: aws
@@ -40,6 +40,7 @@ provider:
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     TODOS_TABLE: Todos-${self:provider.stage}
+    TODOS_USERID_INDEX: TodosUserIdIndex
     AUTH0_SECRET_ID: Auth0Secret-${self:provider.stage}
     AUTH0_SECRET_FIELD: auth0Secret
 
@@ -61,6 +62,10 @@ functions:
           - dynamodb:Query
           - dynamodb:GetItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODOS_USERID_INDEX}
 
   # TODO: Configure this function
   CreateTodo:
@@ -123,8 +128,21 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+          - AttributeName: createdAt
+            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODOS_TABLE}
+        GlobalSecondaryIndexes:
+          - IndexName: ${self:provider.environment.TODOS_USERID_INDEX}
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL

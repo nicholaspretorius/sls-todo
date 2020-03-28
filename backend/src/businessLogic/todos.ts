@@ -1,6 +1,7 @@
 import * as uuid from "uuid";
 
 import { TodoItem } from "./../models/TodoItem";
+import { TodoUpdate } from "./../models/TodoUpdate";
 import { TodoAccess } from './../dataLayer/todosAccess';
 import { CreateTodoRequest } from "./../requests/CreateTodoRequest";
 import { parseUserId } from '../auth/utils';
@@ -39,6 +40,12 @@ export async function createTodo(todo: CreateTodoRequest, userId: string): Promi
         done: false,
         attachmentUrl: "test"
     });
+}
+
+export async function updateTodo(todoId: string, updatedTodo: TodoUpdate): Promise<TodoItem> {
+    logger.info("updateTodo: ", { todoId, updatedTodo });
+
+    return await todosAccess.updateTodo(todoId, updatedTodo);
 }
 
 export async function deleteTodo(todoId: string) {

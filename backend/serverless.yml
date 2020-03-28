@@ -75,6 +75,10 @@ functions:
           method: post
           path: todos
           cors: true
+          authorizer: Auth
+          request:
+            schema:
+              application/json: ${file(models/createTodo.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -126,14 +130,14 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: todoId
             AttributeType: S
           - AttributeName: userId
             AttributeType: S
           - AttributeName: createdAt
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: todoId
             KeyType: HASH
           - AttributeName: createdAt
             KeyType: RANGE

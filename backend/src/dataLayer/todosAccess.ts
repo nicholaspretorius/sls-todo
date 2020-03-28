@@ -30,17 +30,13 @@ export class TodoAccess {
         }).promise();
 
         const todos = result.Items;
-        logger.info("Todos: ", {
-            todos
-        });
+        logger.info("Todos: ", todos);
 
         return todos as TodoItem[];
     }
 
     async createTodo(todo: TodoItem): Promise<TodoItem> {
-        logger.info("Create Todo: ", {
-            todo
-        });
+        logger.info("Create Todo: ", todo);
 
         await this.docClient.put({
             TableName: this.todosTable,
@@ -48,6 +44,21 @@ export class TodoAccess {
         }).promise();
 
         return todo;
+    }
+
+    async deleteTodo(todoId: string, userId: string): Promise<Object> {
+        logger.info("Delete Todo: ", todoId);
+
+        await this.docClient.delete({
+            TableName: this.todosTable,
+            Key: {
+                "todoId": todoId,
+                "userId": userId
+            }
+        }).promise();
+
+
+        return {}
     }
 }
 

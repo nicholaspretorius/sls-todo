@@ -18,7 +18,7 @@ export async function createTodo(todo: CreateTodoRequest, jwtToken: string): Pro
     const userId = parseUserId(jwtToken);
 
     return await todosAccess.createTodo({
-        id: todoId,
+        todoId: todoId,
         userId,
         createdAt: new Date().toISOString(),
         name: todo.name,
@@ -26,5 +26,9 @@ export async function createTodo(todo: CreateTodoRequest, jwtToken: string): Pro
         done: false,
         attachmentUrl: "test"
     });
+}
+
+export async function deleteTodo(todoId: string, userId: string) {
+    return await todosAccess.deleteTodo(todoId, userId);
 }
 

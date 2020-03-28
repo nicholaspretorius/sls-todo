@@ -8,6 +8,7 @@ import { cors } from "middy/middlewares";
 
 import { createTodo } from "./../../businessLogic/todos";
 import { createLogger } from './../../utils/logger';
+import { getUserId } from "./../utils";
 
 const logger = createLogger("createTodo");
 
@@ -20,9 +21,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
     todo: newTodo
   });
 
-  const authorization = event.headers.Authorization;
-  const split = authorization.split(" ");
-  const jwtToken = split[1];
+  const jwtToken = getUserId(event);
 
   const todo = await createTodo(newTodo, jwtToken);
 
@@ -30,6 +29,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
     statusCode: 201,
     body: JSON.stringify(todo)
   };
+
 });
 
 handler.use(

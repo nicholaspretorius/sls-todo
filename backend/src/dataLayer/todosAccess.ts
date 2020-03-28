@@ -8,7 +8,7 @@ import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { TodoItem } from "./../models/TodoItem";
 
 const XAWS = AWSXRay.captureAWS(AWS);
-const logger = createLogger("todosAccess");
+const logger = createLogger("todosAccess:DataLayer: ");
 const todosIndex = process.env.TODOS_USERID_INDEX;
 
 export class TodoAccess {
@@ -35,8 +35,23 @@ export class TodoAccess {
         return todos as TodoItem[];
     }
 
+    async getTodo(todoId: string): Promise<TodoItem> {
+        logger.info("Get Todo: ", { todoId });
+
+        const result = await this.docClient.get({
+            TableName: this.todosTable,
+            Key: {
+                todoId
+            }
+        }).promise();
+
+        const todo = result.Item;
+
+        return todo as TodoItem;
+    }
+
     async createTodo(todo: TodoItem): Promise<TodoItem> {
-        logger.info("Create Todo: ", todo);
+        logger.info("Create Todo: ", { todo });
 
         await this.docClient.put({
             TableName: this.todosTable,
@@ -46,19 +61,15 @@ export class TodoAccess {
         return todo;
     }
 
-    async deleteTodo(todoId: string, userId: string): Promise<Object> {
-        logger.info("Delete Todo: ", todoId);
+    async deleteTodo(todoId: string): Promise<Object> {
+        logger.info("Delete Todo: ", { todoId });
 
-        await this.docClient.delete({
+        return await this.docClient.delete({
             TableName: this.todosTable,
             Key: {
-                "todoId": todoId,
-                "userId": userId
+                todoId
             }
         }).promise();
-
-
-        return {}
     }
 }
 

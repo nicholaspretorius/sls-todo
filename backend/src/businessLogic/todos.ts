@@ -4,21 +4,34 @@ import { TodoItem } from "./../models/TodoItem";
 import { TodoAccess } from './../dataLayer/todosAccess';
 import { CreateTodoRequest } from "./../requests/CreateTodoRequest";
 import { parseUserId } from '../auth/utils';
+import { createLogger } from "./../utils/logger";
+
+const logger = createLogger("Todos:Business Logic: ");
 
 const todosAccess = new TodoAccess();
 
-export async function getTodos(jwtToken: string): Promise<TodoItem[]> {
+export function getTodos(jwtToken: string): Promise<TodoItem[]> {
     const userId = parseUserId(jwtToken);
+
+    logger.info("getTodos: ", userId);
+
     return todosAccess.getTodos(userId);
 }
 
-export async function createTodo(todo: CreateTodoRequest, jwtToken: string): Promise<TodoItem> {
+export function getTodobyId(todoId: string): Promise<TodoItem> {
+
+    logger.info("getTodo: ", { todoId });
+
+    return todosAccess.getTodo(todoId);
+}
+
+export async function createTodo(todo: CreateTodoRequest, userId: string): Promise<TodoItem> {
 
     const todoId = uuid.v4();
-    const userId = parseUserId(jwtToken);
+    logger.info("createTodo: ", { todoId, userId, todo });
 
     return await todosAccess.createTodo({
-        todoId: todoId,
+        todoId,
         userId,
         createdAt: new Date().toISOString(),
         name: todo.name,
@@ -28,7 +41,10 @@ export async function createTodo(todo: CreateTodoRequest, jwtToken: string): Pro
     });
 }
 
-export async function deleteTodo(todoId: string, userId: string) {
-    return await todosAccess.deleteTodo(todoId, userId);
+export async function deleteTodo(todoId: string) {
+    logger.info("deleteTodo: ", {
+        todoId
+    });
+    return await todosAccess.deleteTodo(todoId);
 }
 

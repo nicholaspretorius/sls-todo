@@ -4,7 +4,7 @@
 
 * `cd client && npm start`
 * `sls deploy -v`
-* [URL](https://w9dysl2rg5.execute-api.us-east-1.amazonaws.com/dev)
+* [URL](https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev)
 
 To implement this project, you need to implement a simple TODO application using AWS Lambda and Serverless framework. Search for all comments starting with the `TODO:` in the code to find the placeholders that you need to implement.
 

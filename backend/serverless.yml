@@ -78,7 +78,7 @@ functions:
           authorizer: Auth
           request:
             schema:
-              application/json: ${file(models/createTodo.json)}
+              application/json: ${file(src/models/createTodo.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -102,6 +102,11 @@ functions:
           method: delete
           path: todos/{todoId}
           cors: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
   # TODO: Configure this function
   GenerateUploadUrl:

@@ -7,7 +7,7 @@ import { cors } from "middy/middlewares";
 
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 import { createLogger } from './../../utils/logger';
-import { updateTodo, getTodobyId } from "./../../businessLogic/todos";
+import { updateTodo, getTodoById } from "./../../businessLogic/todos";
 import { getUserId } from "./../utils";
 
 const logger = createLogger("updateTodo.handler");
@@ -23,7 +23,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
 
   // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
   const userId = await getUserId(event);
-  const existingTodo = await getTodobyId(todoId);
+  const existingTodo = await getTodoById(todoId);
 
   if (!existingTodo) {
     return {

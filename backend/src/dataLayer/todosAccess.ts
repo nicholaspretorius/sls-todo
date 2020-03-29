@@ -31,7 +31,7 @@ export class TodoAccess {
         }).promise();
 
         const todos = result.Items;
-        logger.info("Todos: ", todos);
+        logger.info("Todos: ", { todos });
 
         return todos as TodoItem[];
     }
@@ -103,6 +103,6 @@ export class TodoAccess {
 
 function createDynamoDBClient() {
 
-    logger.info("Creating DynamoDB Client...");
+    logger.info("Creating Todos DynamoDB Client...");
     return new XAWS.DynamoDB.DocumentClient();
 }

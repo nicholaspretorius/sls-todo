@@ -6,6 +6,7 @@ import { TodoAccess } from './../dataLayer/todosAccess';
 import { CreateTodoRequest } from "./../requests/CreateTodoRequest";
 import { parseUserId } from '../auth/utils';
 import { createLogger } from "./../utils/logger";
+import { createImage } from "./../businessLogic/todoImages";
 
 const logger = createLogger("Todos:Business Logic: ");
 
@@ -19,7 +20,7 @@ export function getTodos(jwtToken: string): Promise<TodoItem[]> {
     return todosAccess.getTodos(userId);
 }
 
-export function getTodobyId(todoId: string): Promise<TodoItem> {
+export function getTodoById(todoId: string): Promise<TodoItem> {
 
     logger.info("getTodo: ", { todoId });
 
@@ -29,6 +30,7 @@ export function getTodobyId(todoId: string): Promise<TodoItem> {
 export async function createTodo(todo: CreateTodoRequest, userId: string): Promise<TodoItem> {
 
     const todoId = uuid.v4();
+    const image = await createImage(todoId);
     logger.info("createTodo: ", { todoId, userId, todo });
 
     return await todosAccess.createTodo({
@@ -38,7 +40,7 @@ export async function createTodo(todo: CreateTodoRequest, userId: string): Promi
         name: todo.name,
         dueDate: todo.dueDate,
         done: false,
-        attachmentUrl: "test"
+        attachmentUrl: image.uploadUrl
     });
 }
 

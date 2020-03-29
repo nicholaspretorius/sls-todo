@@ -5,7 +5,7 @@ import * as middy from "middy";
 import { cors } from "middy/middlewares";
 
 import { createLogger } from './../../utils/logger';
-import { deleteTodo, getTodobyId } from "./../../businessLogic/todos";
+import { deleteTodo, getTodoById } from "./../../businessLogic/todos";
 import { getUserId } from "./../utils";
 
 const logger = createLogger("deleteTodo.handler");
@@ -20,7 +20,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
   // TODO: Remove a TODO item by id
   const userId = await getUserId(event);
 
-  const todo = await getTodobyId(todoId);
+  const todo = await getTodoById(todoId);
 
   if (!todo) {
     return {

@@ -48,6 +48,13 @@ provider:
     AUTH0_SECRET_ID: Auth0Secret-${self:provider.stage}
     AUTH0_SECRET_FIELD: auth0Secret
 
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource: arn:aws:s3:::${self:provider.environment.TODO_IMAGES_S3_BUCKET}/*
+
 functions:
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
@@ -89,6 +96,10 @@ functions:
         Action:
           - dynamodb:PutItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_IMAGES_TABLE}
 
   # TODO: Configure this function
   UpdateTodo:
@@ -128,6 +139,11 @@ functions:
           method: post
           path: todos/{todoId}/attachment
           cors: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_IMAGES_TABLE}
 
 resources:
   Resources:

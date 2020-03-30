@@ -11,6 +11,7 @@ custom:
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
+  topicName: todoImagesTopic-${self:provider.stage}
 
 # package dependencies per function
 # package:
@@ -45,6 +46,7 @@ provider:
     TODO_IMAGES_ID_INDEX: TodoImageIdIndex
     TODO_IMAGES_S3_BUCKET: sls-todo-images-bucket-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300 # seconds = 5 mins
+    CONNECTIONS_TABLE: TodoConnections-${self:provider.stage}
     AUTH0_SECRET_ID: Auth0Secret-${self:provider.stage}
     AUTH0_SECRET_FIELD: auth0Secret
 
@@ -159,6 +161,63 @@ functions:
           - s3:GetObject
         Resource: arn:aws:s3:::${self:provider.environment.TODO_IMAGES_S3_BUCKET}/*
 
+  ConnectHandler:
+    handler: src/lambda/websocket/connect.handler
+    events:
+      - websocket:
+          route: $connect
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CONNECTIONS_TABLE}
+
+  DisconnectHandler:
+    handler: src/lambda/websocket/disconnect.handler
+    events:
+      - websocket:
+          route: $disconnect
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CONNECTIONS_TABLE}
+
+  SendUploadNotifications:
+    environment:
+      STAGE: ${self:provider.stage}
+      API_ID:
+        Ref: WebsocketsApi
+    handler: src/lambda/s3/sendImageUploadNotifications.handler
+    events:
+      - sns:
+          arn:
+            Fn::Join:
+              - ':'
+              - - arn:aws:sns
+                - Ref: AWS::Region
+                - Ref: AWS::AccountId
+                - ${self:custom.topicName}
+          topicName: ${self:custom.topicName}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Scan
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CONNECTIONS_TABLE}
+
+  UpdateTodoAttachmentUrl:
+    handler: src/lambda/dynamodb/updateImageUrl.handler
+    events:
+      - sns:
+          arn:
+            Fn::Join:
+              - ':'
+              - - arn:aws:sns
+                - Ref: AWS::Region
+                - Ref: AWS::AccountId
+                - ${self:custom.topicName}
+          topicName: ${self:custom.topicName}
+
 resources:
   Resources:
     # TODO: Add any necessary AWS resources
@@ -254,3 +313,30 @@ resources:
               Action: 's3:GetObject'
               Resource: 'arn:aws:s3:::${self:provider.environment.TODO_IMAGES_S3_BUCKET}/*'
         Bucket: !Ref TodoImagesBucket
+
+    TodoConnectionsDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.CONNECTIONS_TABLE}
+
+    TodoImagesTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: Todo Images Bucket Topic
+        TopicName: ${self:custom.topicName}
+
+    SendUploadNotificationsPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !Ref SendUploadNotificationsLambdaFunction
+        Principal: s3.amazonaws.com
+        Action: lambda:InvokeFunction
+        SourceAccount: !Ref AWS::AccountId
+        SourceArn: arn:aws:s3:::${self:provider.environment.TODO_IMAGES_S3_BUCKET}

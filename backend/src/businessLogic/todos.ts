@@ -46,8 +46,12 @@ export async function createTodo(todo: CreateTodoRequest, userId: string): Promi
 
 export async function updateTodo(todoId: string, updatedTodo: TodoUpdate): Promise<TodoItem> {
     logger.info("updateTodo: ", { todoId, updatedTodo });
-
     return await todosAccess.updateTodo(todoId, updatedTodo);
+}
+
+export async function updateAttachmentUrl(todoId, attachmentUrl) {
+    logger.info("updateAttachmentUrl: ", { todoId, attachmentUrl });
+    return await todosAccess.updateAttachmentUrl(todoId, attachmentUrl);
 }
 
 export async function deleteTodo(todoId: string) {

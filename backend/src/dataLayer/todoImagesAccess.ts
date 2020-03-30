@@ -63,6 +63,18 @@ export class TodoImagesAccess {
 
         return images as TodoImageItem[];
     }
+
+    async getS3Object(key) {
+        const response = await this.s3.getObject({
+            Bucket: bucketName,
+            Key: key
+        }).promise();
+
+        const body = response.Body;
+
+        return body;
+    }
+
 }
 
 function createDynamoDBClient() {

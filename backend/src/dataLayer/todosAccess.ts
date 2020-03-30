@@ -70,11 +70,13 @@ export class TodoAccess {
             Key: {
                 todoId
             },
-            UpdateExpression: "SET #todoName = :name, dueDate = :dueDate, done = :done",
+            UpdateExpression: "SET #todoName = :name, dueDate = :dueDate, done = :done, attachmentUrl = :attachmentUrl",
             ExpressionAttributeValues: {
                 ":name": updatedTodo.name,
                 ":dueDate": updatedTodo.dueDate,
                 ":done": updatedTodo.done,
+                ":attachmentUrl": updatedTodo.attachmentUrl
+
             },
             ExpressionAttributeNames: {
                 "#todoName": "name"
@@ -85,6 +87,28 @@ export class TodoAccess {
         const todo = result.Attributes;
 
         logger.info("Updated Todo: ", { todo });
+
+        return todo as TodoItem;
+    }
+
+    async updateAttachmentUrl(todoId: string, attachmentUrl: string): Promise<TodoItem> {
+        logger.info("Update Todo attachmentUrl: ", { todoId, attachmentUrl });
+
+        const result = await this.docClient.update({
+            TableName: this.todosTable,
+            Key: {
+                todoId
+            },
+            UpdateExpression: "SET attachmentUrl = :attachmentUrl",
+            ExpressionAttributeValues: {
+                ":attachmentUrl": attachmentUrl
+            },
+            ReturnValues: "ALL_NEW",
+        }).promise();
+
+        const todo = result.Attributes;
+
+        logger.info("Updated Todo with attachmentUrl: ", { todo });
 
         return todo as TodoItem;
     }
@@ -102,7 +126,6 @@ export class TodoAccess {
 }
 
 function createDynamoDBClient() {
-
     logger.info("Creating Todos DynamoDB Client...");
     return new XAWS.DynamoDB.DocumentClient();
 }

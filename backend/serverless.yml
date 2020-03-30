@@ -56,6 +56,12 @@ provider:
         - s3:PutObject
         - s3:GetObject
       Resource: arn:aws:s3:::${self:provider.environment.TODO_IMAGES_S3_BUCKET}/*
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CONNECTIONS_TABLE}
 
 functions:
   Auth:
@@ -204,6 +210,10 @@ functions:
         Action:
           - dynamodb:Scan
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CONNECTIONS_TABLE}
+      - Effect: Allow
+        Action:
+          - s3:GetObject
+        Resource: arn:aws:s3:::${self:provider.environment.TODO_IMAGES_S3_BUCKET}/*
 
   UpdateTodoAttachmentUrl:
     handler: src/lambda/dynamodb/updateImageUrl.handler
@@ -286,10 +296,10 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:provider.environment.TODO_IMAGES_S3_BUCKET}
-        # NotificationConfiguration:
-        #   TopicConfigurations:
-        #     - Event: s3:ObjectCreated:Put
-        #       Topic: !Ref TodoImagesTopic
+        NotificationConfiguration:
+          TopicConfigurations:
+            - Event: s3:ObjectCreated:Put
+              Topic: !Ref TodoImagesTopic
         CorsConfiguration:
           CorsRules:
             - AllowedOrigins:

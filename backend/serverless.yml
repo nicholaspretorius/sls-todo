@@ -286,6 +286,10 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:provider.environment.TODO_IMAGES_S3_BUCKET}
+        # NotificationConfiguration:
+        #   TopicConfigurations:
+        #     - Event: s3:ObjectCreated:Put
+        #       Topic: !Ref TodoImagesTopic
         CorsConfiguration:
           CorsRules:
             - AllowedOrigins:
@@ -313,6 +317,23 @@ resources:
               Action: 's3:GetObject'
               Resource: 'arn:aws:s3:::${self:provider.environment.TODO_IMAGES_S3_BUCKET}/*'
         Bucket: !Ref TodoImagesBucket
+
+    SNSTopicPolicy:
+      Type: AWS::SNS::TopicPolicy
+      Properties:
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                AWS: '*'
+              Action: sns:Publish
+              Resource: !Ref TodoImagesTopic
+              Condition:
+                ArnLike:
+                  AWS:SourceArn: arn:aws:s3:::${self:provider.environment.TODO_IMAGES_S3_BUCKET}
+        Topics:
+          - !Ref TodoImagesTopic
 
     TodoConnectionsDynamoDBTable:
       Type: AWS::DynamoDB::Table

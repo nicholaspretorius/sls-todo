@@ -19,6 +19,12 @@ export async function createImage(todoId: string): Promise<TodoImageItem> {
     });
 }
 
+export async function getTodoIdByImageId(imageId: string) {
+    logger.info("getTodoIdByImageId: ", { imageId });
+
+    return await todoImagesAccess.getImageById(imageId);
+}
+
 export async function getS3Object(key: string) {
     logger.info("getS3Object", { key });
 

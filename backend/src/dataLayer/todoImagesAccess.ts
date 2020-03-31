@@ -64,6 +64,22 @@ export class TodoImagesAccess {
         return images as TodoImageItem[];
     }
 
+    async getImageById(imageId: string): Promise<TodoImageItem> {
+        const result = await this.docClient.query({
+            TableName: this.todoImagesTable,
+            IndexName: todoImagesIndex,
+            KeyConditionExpression: "imageId = :imageId",
+            ExpressionAttributeValues: {
+                ":imageId": imageId
+            }
+        }).promise();
+
+        const image = result.Items[0];
+        logger.info("Image by ID: ", { image });
+
+        return image as TodoImageItem;
+    }
+
     async getS3Object(key) {
         const response = await this.s3.getObject({
             Bucket: bucketName,

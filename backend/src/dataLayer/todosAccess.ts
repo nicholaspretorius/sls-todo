@@ -70,12 +70,11 @@ export class TodoAccess {
             Key: {
                 todoId
             },
-            UpdateExpression: "SET #todoName = :name, dueDate = :dueDate, done = :done, attachmentUrl = :attachmentUrl",
+            UpdateExpression: "SET #todoName = :name, dueDate = :dueDate, done = :done",
             ExpressionAttributeValues: {
                 ":name": updatedTodo.name,
                 ":dueDate": updatedTodo.dueDate,
-                ":done": updatedTodo.done,
-                ":attachmentUrl": updatedTodo.attachmentUrl
+                ":done": updatedTodo.done
 
             },
             ExpressionAttributeNames: {

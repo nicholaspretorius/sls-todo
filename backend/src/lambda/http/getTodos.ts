@@ -18,12 +18,30 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
   const split = authorization.split(" ");
   const jwtToken = split[1];
 
-  const todos = await getTodos(jwtToken);
+  let nextKey;
+  let limit;
+
+  try {
+    nextKey = parseNextKeyParameter(event);
+    limit = parseLimitParameter(event) || 20;
+  } catch (e) {
+    logger.error("Failed to parse query parameters: ", { error: e });
+
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        error: "Invalid parameters"
+      })
+    }
+  }
+
+  const todos = await getTodos(jwtToken, nextKey, limit);
 
   return {
     statusCode: 200,
     body: JSON.stringify({
-      todos
+      todos: todos.todos,
+      nextKey: encodeNextKey(todos.nextKey)
     })
   }
 });
@@ -34,3 +52,49 @@ handler.use(
     origin: "*"
   })
 );
+
+function getQueryParameter(event, name) {
+  const queryParams = event.queryStringParameters
+  if (!queryParams) {
+    return undefined
+  }
+
+  return queryParams[name]
+}
+
+function parseNextKeyParameter(event) {
+  const nextKey = getQueryParameter(event, "nextKey");
+
+  if (!nextKey) {
+    return undefined;
+  }
+
+  const uriDecoded = decodeURIComponent(nextKey)
+  return JSON.parse(uriDecoded);
+}
+
+function parseLimitParameter(event) {
+  const limitStr = getQueryParameter(event, "limit");
+
+  if (!limitStr) {
+    return undefined;
+  }
+
+  const limit = parseInt(limitStr, 10);
+
+
+  if (limit <= 0) {
+    throw new Error("Limit should be greater than 0");
+  }
+
+  return limit;
+}
+
+function encodeNextKey(lastEvaluatedKey) {
+
+  if (!lastEvaluatedKey) {
+    return null
+  }
+
+  return encodeURIComponent(JSON.stringify(lastEvaluatedKey))
+}

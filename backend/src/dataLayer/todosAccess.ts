@@ -19,10 +19,12 @@ export class TodoAccess {
         private readonly todosTable = process.env.TODOS_TABLE,
     ) { }
 
-    async getTodos(userId: string): Promise<TodoItem[]> {
+    async getTodos(userId: string, nextKey?, limit?: number) {
 
         const result = await this.docClient.query({
             TableName: this.todosTable,
+            Limit: limit,
+            ExclusiveStartKey: nextKey,
             IndexName: todosIndex,
             KeyConditionExpression: "userId = :userId",
             ExpressionAttributeValues: {
@@ -30,10 +32,13 @@ export class TodoAccess {
             }
         }).promise();
 
-        const todos = result.Items;
+        const todos = {
+            todos: result.Items,
+            nextKey: result.LastEvaluatedKey
+        };
         logger.info("Todos: ", { todos });
 
-        return todos as TodoItem[];
+        return todos;
     }
 
     async getTodo(todoId: string): Promise<TodoItem> {

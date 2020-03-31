@@ -194,7 +194,7 @@ functions:
       STAGE: ${self:provider.stage}
       API_ID:
         Ref: WebsocketsApi
-    handler: src/lambda/s3/sendImageUploadNotifications.handler
+    handler: src/lambda/s3/sendNotifications.handler
     events:
       - sns:
           arn:
@@ -209,14 +209,20 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:Scan
+          - dynamodb:DeleteItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CONNECTIONS_TABLE}
       - Effect: Allow
         Action:
           - s3:GetObject
         Resource: arn:aws:s3:::${self:provider.environment.TODO_IMAGES_S3_BUCKET}/*
+      - Effect: Allow
+        Action:
+          - execute-api:ManageConnections
+        Resource:
+          - 'arn:aws:execute-api:*:*:**/@connections/*'
 
   UpdateTodoAttachmentUrl:
-    handler: src/lambda/dynamodb/updateImageUrl.handler
+    handler: src/lambda/dynamodb/updateImage.handler
     events:
       - sns:
           arn:
@@ -227,6 +233,23 @@ functions:
                 - Ref: AWS::AccountId
                 - ${self:custom.topicName}
           topicName: ${self:custom.topicName}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:GetObject
+        Resource: arn:aws:s3:::${self:provider.environment.TODO_IMAGES_S3_BUCKET}/*
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_IMAGES_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_IMAGES_TABLE}/index/${self:provider.environment.TODO_IMAGES_ID_INDEX}
 
 resources:
   Resources:
@@ -328,6 +351,21 @@ resources:
               Resource: 'arn:aws:s3:::${self:provider.environment.TODO_IMAGES_S3_BUCKET}/*'
         Bucket: !Ref TodoImagesBucket
 
+    TodoImagesTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: Todo Images Bucket Topic
+        TopicName: ${self:custom.topicName}
+
+    SendUploadNotificationsPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !Ref SendUploadNotificationsLambdaFunction
+        Principal: s3.amazonaws.com
+        Action: lambda:InvokeFunction
+        SourceAccount: !Ref AWS::AccountId
+        SourceArn: arn:aws:s3:::${self:provider.environment.TODO_IMAGES_S3_BUCKET}
+
     SNSTopicPolicy:
       Type: AWS::SNS::TopicPolicy
       Properties:
@@ -356,18 +394,3 @@ resources:
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.CONNECTIONS_TABLE}
-
-    TodoImagesTopic:
-      Type: AWS::SNS::Topic
-      Properties:
-        DisplayName: Todo Images Bucket Topic
-        TopicName: ${self:custom.topicName}
-
-    SendUploadNotificationsPermission:
-      Type: AWS::Lambda::Permission
-      Properties:
-        FunctionName: !Ref SendUploadNotificationsLambdaFunction
-        Principal: s3.amazonaws.com
-        Action: lambda:InvokeFunction
-        SourceAccount: !Ref AWS::AccountId
-        SourceArn: arn:aws:s3:::${self:provider.environment.TODO_IMAGES_S3_BUCKET}

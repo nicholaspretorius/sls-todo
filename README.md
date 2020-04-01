@@ -7,6 +7,7 @@
 * [URL](https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev)
 * `wscat -c wss://j2kj366hg2.execute-api.us-east-1.amazonaws.com/dev`
 * [ElasticSearch](https://search-todos-search-dev-ud64t7xt63a2anr5ywt7t5axzm.us-east-1.es.amazonaws.com)
+* [Kibana](https://search-todos-search-dev-ud64t7xt63a2anr5ywt7t5axzm.us-east-1.es.amazonaws.com/_plugin/kibana/)
 
 To implement this project, you need to implement a simple TODO application using AWS Lambda and Serverless framework. Search for all comments starting with the `TODO:` in the code to find the placeholders that you need to implement.
 

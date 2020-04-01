@@ -28,11 +28,15 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
             index: "todos-index",
             body: {
                 query: {
-                    match: { name: query }
+                    fuzzy: {
+                        name: {
+                            value: query,
+                            fuzziness: 1
+                        }
+                    }
                 }
             }
-        })
-
+        });
 
         const total = results.hits.total;
         const todos = results.hits.hits.map(result => result._source);

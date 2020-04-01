@@ -20,10 +20,12 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
 
   let nextKey;
   let limit;
+  let sort;
 
   try {
     nextKey = parseNextKeyParameter(event);
     limit = parseLimitParameter(event) || 20;
+    sort = getQueryParameter(event, "sort") || "ASC";
   } catch (e) {
     logger.error("Failed to parse query parameters: ", { error: e });
 
@@ -35,7 +37,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
     }
   }
 
-  const todos = await getTodos(jwtToken, nextKey, limit);
+  const todos = await getTodos(jwtToken, nextKey, limit, sort);
 
   return {
     statusCode: 200,

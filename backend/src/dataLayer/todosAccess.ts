@@ -11,6 +11,7 @@ import { TodoUpdate } from "./../models/TodoUpdate";
 const XAWS = AWSXRay.captureAWS(AWS);
 const logger = createLogger("todosAccess:DataLayer: ");
 const todosIndex = process.env.TODOS_USERID_INDEX;
+const todosDueDateIndex = process.env.TODOS_USERID_DUEDATE_INDEX;
 
 export class TodoAccess {
 
@@ -19,24 +20,32 @@ export class TodoAccess {
         private readonly todosTable = process.env.TODOS_TABLE,
     ) { }
 
-    async getTodos(userId: string, nextKey?, limit?: number) {
+    async getTodos(userId: string, nextKey?, limit?: number, sort?: string) {
 
-        const result = await this.docClient.query({
+        logger.info("Sort? ", { sort });
+
+        const queryParams = {
             TableName: this.todosTable,
             Limit: limit,
             ExclusiveStartKey: nextKey,
-            IndexName: todosIndex,
+            IndexName: sort ? todosDueDateIndex : todosIndex,
+            ScanIndexForward: sort === "DESC" ? false : true,    // true = ascending, false = descending
             KeyConditionExpression: "userId = :userId",
             ExpressionAttributeValues: {
                 ":userId": userId
             }
-        }).promise();
+        };
+
+        const result = await this.docClient.query(queryParams).promise();
+
+        const sorted = result.Items.sort((a, b) => (sort === "ASC" ? a.dueDate < b.dueDate ? -1 : 1 : a.dueDate < b.dueDate ? 1 : -1));
+        logger.info("Sorted Todos by dueDate: ", { todos: sorted });
 
         const todos = {
-            todos: result.Items,
+            todos: sorted,
             nextKey: result.LastEvaluatedKey
         };
-        logger.info("Todos: ", { todos });
+        // logger.info("Todos: ", { todos });
 
         return todos;
     }

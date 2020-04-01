@@ -12,12 +12,12 @@ const logger = createLogger("Todos:Business Logic: ");
 
 const todosAccess = new TodoAccess();
 
-export function getTodos(jwtToken: string, nextKey?, limit?: number) {
+export function getTodos(jwtToken: string, nextKey?, limit?: number, sort?: string) {
     const userId = parseUserId(jwtToken);
 
-    logger.info("getTodos: ", userId);
+    logger.info("getTodos: ", { userId, limit, sort });
 
-    return todosAccess.getTodos(userId, nextKey, limit);
+    return todosAccess.getTodos(userId, nextKey, limit, sort);
 }
 
 export function getTodoById(todoId: string): Promise<TodoItem> {

@@ -42,6 +42,7 @@ provider:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     TODOS_TABLE: Todos-${self:provider.stage}
     TODOS_USERID_INDEX: TodosUserIdIndex
+    TODOS_USERID_DUEDATE_INDEX: TodosUserIdDueDateIndex
     TODO_IMAGES_TABLE: TodoImages-${self:provider.stage}
     TODO_IMAGES_ID_INDEX: TodoImageIdIndex
     TODO_IMAGES_S3_BUCKET: sls-todo-images-bucket-${self:provider.stage}
@@ -273,8 +274,8 @@ resources:
             AttributeType: S
           - AttributeName: userId
             AttributeType: S
-          # - AttributeName: createdAt
-          #   AttributeType: S
+          - AttributeName: dueDate
+            AttributeType: S
         KeySchema:
           - AttributeName: todoId
             KeyType: HASH
@@ -287,6 +288,14 @@ resources:
             KeySchema:
               - AttributeName: userId
                 KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+          - IndexName: ${self:provider.environment.TODOS_USERID_DUEDATE_INDEX}
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: dueDate
+                KeyType: RANGE
             Projection:
               ProjectionType: ALL
 

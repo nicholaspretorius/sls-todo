@@ -22,8 +22,6 @@ export class TodoAccess {
 
     async getTodos(userId: string, nextKey?, limit?: number, sort?: string) {
 
-        logger.info("Sort? ", { sort });
-
         const queryParams = {
             TableName: this.todosTable,
             Limit: limit,

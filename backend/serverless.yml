@@ -265,6 +265,16 @@ functions:
           type: dynamodb
           arn: !GetAtt TodosDynamoDBTable.StreamArn
 
+  SearchTodos:
+    environment:
+      ES_ENDPOINT: !GetAtt TodosSearch.DomainEndpoint
+    handler: src/lambda/http/elasticSearchSearch.handler
+    events:
+      - http:
+          method: get
+          path: todos/search
+          cors: true
+
 resources:
   Resources:
     # TODO: Add any necessary AWS resources

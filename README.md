@@ -1,13 +1,76 @@
 # Serverless TODO
 
+## Reviewer Notes
+
+Thank you for reviewing my project! 
+
+I have updated the Postman collection to reflect my application. Please take a look at it and use as required.
+
+### Serverless API Endpoints
+
+[GET /todos](https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev/todos)
+
+The GET /todos endpont can receive 3 possible query paramters: 
+
+* sort: ASC for ascending according to dueDate, DESC for descending according to dueDate. (ASC is default and does not need to be supplied)
+* limit: Takes a positive integer
+* nextKey: If a "nextKey" is available, it will be supplied by the response in conjunction with the 'limit' paramter. 
+
+For example, a request may look like one of these: 
+
+* GET https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev/todos?sort=DESC
+* GET https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev/todos?sort=DESC&limit=3
+* GET https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev/todos?sort=DESC&limit=3&nextKey=addNextKeyValueFromResponseHere
+
+[POST /todos](https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev/todos/)
+
+The POST /todos endpoint takes a JSON body in the application/json format. Requests are validated.
+
+[DELETE /todos/{todoId}](https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev/todos/{todoId})
+
+
+[PATCH /todos/{todoId}](https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev/todos/{todoId})
+
+The PATCH /todos/{todoId} endpoint takes a JSON body in the application/json format. Requests are validated.
+
+[GET /todos/search?q=example](https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev/todos/search?q=example)
+
+There is a /todos/search endpoint which takes a query parameter of "q" (query) and returns todos with a fuzzy-matching name. Only "q" can be used and only the "name" field of the todos are queried. 
+
+### Logging and X-Ray
+
+I have included numerous logging statements that appear in CloudWatch and X-Ray is enabled and working for the endpoints. 
+
 ## Development Notes
 
-* `cd client && npm start`
-* `sls deploy -v`
-* [URL](https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev)
-* `wscat -c wss://j2kj366hg2.execute-api.us-east-1.amazonaws.com/dev`
+### Git
+
+* `git checkout https://github.com/nicholaspretorius/sls-todo.git`
+
+### Client
+
+* From the root of the project: `cd client`
+* `npm install`
+* `npm start` to run the client 
+* [Serverless Todo Application](http://localhost:3000)
+
+In order to use the API via Postman, please run the client, open the DeveloperTools console and copy the JWT token. You can then paste the token into the Postman collection's variables. 
+
+### Backend
+
+There is no need to deploy the application as the backend is running. However these are development instructions: 
+
+* `cd backend && npm install`
+* `sls deploy -v` to deploy the Serverless App
+* [Serverless API URL](https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev)
 * [ElasticSearch](https://search-todos-search-dev-ud64t7xt63a2anr5ywt7t5axzm.us-east-1.es.amazonaws.com)
 * [Kibana](https://search-todos-search-dev-ud64t7xt63a2anr5ywt7t5axzm.us-east-1.es.amazonaws.com/_plugin/kibana/)
+* `npm i -g wscat`
+* `wscat -c wss://j2kj366hg2.execute-api.us-east-1.amazonaws.com/dev` to connect to the WebSocket
+
+Thank you! 
+
+### Original Project Notes: 
 
 To implement this project, you need to implement a simple TODO application using AWS Lambda and Serverless framework. Search for all comments starting with the `TODO:` in the code to find the placeholders that you need to implement.
 

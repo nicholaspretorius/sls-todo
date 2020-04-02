@@ -160,9 +160,6 @@ functions:
           method: post
           path: todos/{todoId}/attachment
           cors: true
-          request:
-            schema:
-              application/json: ${file(src/models/generateUploadUrl.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:

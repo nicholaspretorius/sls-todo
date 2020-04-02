@@ -8,10 +8,6 @@ import { getTodoIdByImageId } from "./../../businessLogic/todoImages";
 
 const logger = createLogger("updateImage");
 
-// const s3 = new AWS.S3();
-
-// const imagesBucket = process.env.TODO_IMAGES_S3_BUCKET;
-
 export const handler: SNSHandler = async (event: SNSEvent) => {
     logger.info("Processing SNS Event: ", { event });
 
@@ -26,7 +22,6 @@ export const handler: SNSHandler = async (event: SNSEvent) => {
         for (const record of s3Event.Records) {
             await updateImage(record);
         }
-
     }
 }
 

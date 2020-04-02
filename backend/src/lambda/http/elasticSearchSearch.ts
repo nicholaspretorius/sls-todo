@@ -57,7 +57,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
         return {
             statusCode: 400,
             body: JSON.stringify({
-                error: "Invalid search parameters"
+                error: "Invalid search parameters. Please use the 'q' query parameter. For example: todos/search?q=example"
             })
         }
     }

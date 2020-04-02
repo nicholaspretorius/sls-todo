@@ -44,11 +44,11 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
   }
 
 
-  logger.info(`User ${userId} attempted to delete todo ${todoId} owned by ${todo.userId}`);
+  logger.info(`User ${userId} attempted to generate an upload URL for todo ${todoId} owned by ${todo.userId}`);
 
   return {
     statusCode: 403,
-    body: JSON.stringify({ message: `Unauthorised, you may not delete todos you did not create` })
+    body: JSON.stringify({ message: `Unauthorised, you may not generate upload URLs for todos you did not create.` })
   }
 
 

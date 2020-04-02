@@ -32,7 +32,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
     return {
       statusCode: 400,
       body: JSON.stringify({
-        error: "Invalid parameters"
+        error: "Invalid query parameters. The allowed parameters are 'sort' (ASC/DESC. ASC is default), 'limit' (Positive integer i.e. 5,10,20), 'nextKey' (provided in response)."
       })
     }
   }

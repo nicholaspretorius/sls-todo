@@ -41,7 +41,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
         body: JSON.stringify(todo)
       };
     } catch (e) {
-      logger.error(`Error deleting todo with id: ${todoId}`, {
+      logger.error(`Error updating todo with id: ${todoId}`, {
         error: e
       })
     }

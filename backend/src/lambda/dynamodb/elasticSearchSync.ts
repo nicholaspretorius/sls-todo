@@ -26,7 +26,7 @@ export const handler: DynamoDBStreamHandler = async (event: DynamoDBStreamEvent)
 
         const newItem = record.dynamodb.NewImage;
 
-        logger.info("New ES Record Sync: ", { item: newItem });
+        logger.info("New ElasticSearch Record Sync: ", { item: newItem });
 
         const body = {
             todoId: newItem.todoId.S,

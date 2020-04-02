@@ -44,13 +44,4 @@ async function updateImage(record: S3EventRecord) {
     } catch (e) {
         logger.error("Error updating attachmentUrl: ", { error: e });
     }
-
-    // const response = await s3.getObject({
-    //     Bucket: imagesBucket,
-    //     Key: key
-    // }).promise();
-
-    // logger.info("Response: ", { response });
-
-    // const body = response.Body;
 }

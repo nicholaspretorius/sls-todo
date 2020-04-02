@@ -64,13 +64,13 @@ There is no need to deploy the application as the backend is running. However th
 * `sls deploy -v` to deploy the Serverless App
 * [Serverless API URL](https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev)
 * [ElasticSearch](https://search-todos-search-dev-ud64t7xt63a2anr5ywt7t5axzm.us-east-1.es.amazonaws.com)
-* [Kibana](https://search-todos-search-dev-ud64t7xt63a2anr5ywt7t5axzm.us-east-1.es.amazonaws.com/_plugin/kibana/)
 * `npm i -g wscat`
 * `wscat -c wss://j2kj366hg2.execute-api.us-east-1.amazonaws.com/dev` to connect to the WebSocket
 
-Thank you! 
 
-### Original Project Notes: 
+
+
+# Original Project Notes: 
 
 To implement this project, you need to implement a simple TODO application using AWS Lambda and Serverless framework. Search for all comments starting with the `TODO:` in the code to find the placeholders that you need to implement.
 

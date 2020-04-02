@@ -127,6 +127,9 @@ functions:
           method: patch
           path: todos/{todoId}
           cors: true
+          request:
+            schema:
+              application/json: ${file(src/models/updateTodo.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -157,6 +160,9 @@ functions:
           method: post
           path: todos/{todoId}/attachment
           cors: true
+          request:
+            schema:
+              application/json: ${file(src/models/generateUploadUrl.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:

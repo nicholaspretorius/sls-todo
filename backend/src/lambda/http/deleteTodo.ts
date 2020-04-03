@@ -18,7 +18,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
   // TODO: Remove a TODO item by id
   const userId = await getUserId(event);
 
-  const todo = await getTodoById(todoId);
+  const todo = await getTodoById(userId, todoId);
 
   if (!todo) {
     return {
@@ -29,7 +29,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
 
   if (userId === todo.userId) {
     try {
-      await deleteTodo(todoId);
+      await deleteTodo(userId, todoId);
 
       logger.info(`todoId: ${todoId} deleted`);
 

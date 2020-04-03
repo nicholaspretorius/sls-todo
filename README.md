@@ -77,9 +77,9 @@ By comparison, the original app, now on the "stg" stage is using the original To
 
 ### Stage
 
-Currently, there are two stages: 
+There are two stages. The stg stage was only created in order to use the "dev" stage to make the required change by code review and will soon fall away. The following is only for informational purposes. "dev" is the stage to be reviewed: 
 
-1. /dev - linked to the "updateKeySchema" branch in Git
+1. /dev - previously linked to the "updateKeySchema" branch in Git (now merged into master)
 2. /stg - linked to the "master" branch in Git
 
 These are not *hard* links. Either branch can deploy to either stage, this is not enforced in any way through code: 

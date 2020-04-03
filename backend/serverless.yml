@@ -40,10 +40,10 @@ provider:
     minimumCompressionSize: 1024 # enable gzip for responses > 1KB
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-    TODOS_TABLE: Todos-${self:provider.stage}
+    TODOS_TABLE: TodosSls-${self:provider.stage}
     TODOS_USERID_INDEX: TodosUserIdIndex
     TODOS_USERID_DUEDATE_INDEX: TodosUserIdDueDateIndex
-    TODO_IMAGES_TABLE: TodoImages-${self:provider.stage}
+    TODO_IMAGES_TABLE: TodoImagesSls-${self:provider.stage}
     TODO_IMAGES_ID_INDEX: TodoImageIdIndex
     TODO_IMAGES_S3_BUCKET: sls-todo-images-bucket-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300 # seconds = 5 mins
@@ -333,17 +333,21 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
           - AttributeName: todoId
             AttributeType: S
           - AttributeName: imageId
             AttributeType: S
-          - AttributeName: createdAt
-            AttributeType: S
+          # - AttributeName: createdAt
+          #   AttributeType: S
         KeySchema:
-          - AttributeName: todoId
+          - AttributeName: userId
             KeyType: HASH
-          - AttributeName: createdAt
+          - AttributeName: todoId
             KeyType: RANGE
+          # - AttributeName: createdAt
+          #   KeyType: RANGE
         GlobalSecondaryIndexes:
           - IndexName: ${self:provider.environment.TODO_IMAGES_ID_INDEX}
             KeySchema:

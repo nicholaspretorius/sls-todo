@@ -8,12 +8,13 @@ const logger = createLogger("TodoImages:Business Logic: ");
 
 const todoImagesAccess = new TodoImagesAccess();
 
-export async function createImage(todoId: string): Promise<TodoImageItem> {
+export async function createImage(userId: string, todoId: string): Promise<TodoImageItem> {
     const imageId = uuid.v4();
 
-    logger.info("createImage", { todoId, imageId });
+    logger.info("createImage", { userId, todoId, imageId });
 
     return await todoImagesAccess.createImage({
+        userId,
         todoId,
         imageId,
     });

@@ -48,12 +48,13 @@ export class TodoAccess {
         return todos;
     }
 
-    async getTodo(todoId: string): Promise<TodoItem> {
-        logger.info("Get Todo: ", { todoId });
+    async getTodo(userId: string, todoId: string): Promise<TodoItem> {
+        logger.info("Get Todo: ", { userId, todoId });
 
         const result = await this.docClient.get({
             TableName: this.todosTable,
             Key: {
+                userId,
                 todoId
             }
         }).promise();
@@ -74,12 +75,25 @@ export class TodoAccess {
         return todo;
     }
 
-    async updateTodo(todoId: string, updatedTodo: TodoUpdate): Promise<TodoItem> {
-        logger.info("Update Todo: ", { todoId, updatedTodo });
+    async deleteTodo(userId: string, todoId: string): Promise<Object> {
+        logger.info("Delete Todo: ", { todoId });
+
+        return await this.docClient.delete({
+            TableName: this.todosTable,
+            Key: {
+                userId,
+                todoId
+            }
+        }).promise();
+    }
+
+    async updateTodo(userId: string, todoId: string, updatedTodo: TodoUpdate): Promise<TodoItem> {
+        logger.info("Update Todo: ", { userId, todoId, updatedTodo });
 
         const result = await this.docClient.update({
             TableName: this.todosTable,
             Key: {
+                userId,
                 todoId
             },
             UpdateExpression: "SET #todoName = :name, dueDate = :dueDate, done = :done",
@@ -102,12 +116,13 @@ export class TodoAccess {
         return todo as TodoItem;
     }
 
-    async updateAttachmentUrl(todoId: string, attachmentUrl: string): Promise<TodoItem> {
+    async updateAttachmentUrl(userId: string, todoId: string, attachmentUrl: string): Promise<TodoItem> {
         logger.info("Update Todo attachmentUrl: ", { todoId, attachmentUrl });
 
         const result = await this.docClient.update({
             TableName: this.todosTable,
             Key: {
+                userId,
                 todoId
             },
             UpdateExpression: "SET attachmentUrl = :attachmentUrl",
@@ -122,17 +137,6 @@ export class TodoAccess {
         logger.info("Updated Todo with attachmentUrl: ", { todo });
 
         return todo as TodoItem;
-    }
-
-    async deleteTodo(todoId: string): Promise<Object> {
-        logger.info("Delete Todo: ", { todoId });
-
-        return await this.docClient.delete({
-            TableName: this.todosTable,
-            Key: {
-                todoId
-            }
-        }).promise();
     }
 }
 

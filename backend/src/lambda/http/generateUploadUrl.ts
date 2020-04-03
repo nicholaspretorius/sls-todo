@@ -16,8 +16,8 @@ const logger = createLogger("generateUploadUrl.handler");
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId;
 
-  const todo = await getTodoById(todoId);
   const userId = await getUserId(event);
+  const todo = await getTodoById(userId, todoId);
 
   logger.info(`Generating UploadUrl for Todo ${todoId} by ${userId}: `, {
     todoId,
@@ -32,7 +32,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
   }
 
   if (userId === todo.userId) {
-    const todoImage = await createImage(todoId);
+    const todoImage = await createImage(userId, todoId);
 
     // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
     return {

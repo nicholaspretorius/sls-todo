@@ -20,11 +20,11 @@ export function getTodos(jwtToken: string, nextKey?, limit?: number, sort?: stri
     return todosAccess.getTodos(userId, nextKey, limit, sort);
 }
 
-export function getTodoById(todoId: string): Promise<TodoItem> {
+export function getTodoById(userId: string, todoId: string): Promise<TodoItem> {
 
-    logger.info("getTodo: ", { todoId });
+    logger.info("getTodo: ", { userId, todoId });
 
-    return todosAccess.getTodo(todoId);
+    return todosAccess.getTodo(userId, todoId);
 }
 
 export async function createTodo(todo: CreateTodoRequest, userId: string): Promise<TodoItem> {
@@ -44,20 +44,18 @@ export async function createTodo(todo: CreateTodoRequest, userId: string): Promi
     });
 }
 
-export async function updateTodo(todoId: string, updatedTodo: TodoUpdate): Promise<TodoItem> {
+export async function updateTodo(userId: string, todoId: string, updatedTodo: TodoUpdate): Promise<TodoItem> {
     logger.info("updateTodo: ", { todoId, updatedTodo });
-    return await todosAccess.updateTodo(todoId, updatedTodo);
+    return await todosAccess.updateTodo(userId, todoId, updatedTodo);
 }
 
-export async function updateAttachmentUrl(todoId, attachmentUrl) {
-    logger.info("updateAttachmentUrl: ", { todoId, attachmentUrl });
-    return await todosAccess.updateAttachmentUrl(todoId, attachmentUrl);
+export async function updateAttachmentUrl(userId: string, todoId: string, attachmentUrl) {
+    logger.info("updateAttachmentUrl: ", { userId, todoId, attachmentUrl });
+    return await todosAccess.updateAttachmentUrl(userId, todoId, attachmentUrl);
 }
 
-export async function deleteTodo(todoId: string) {
-    logger.info("deleteTodo: ", {
-        todoId
-    });
-    return await todosAccess.deleteTodo(todoId);
+export async function deleteTodo(userId: string, todoId: string) {
+    logger.info("deleteTodo: ", { userId, todoId });
+    return await todosAccess.deleteTodo(userId, todoId);
 }
 

@@ -35,7 +35,7 @@ async function updateImage(record: S3EventRecord) {
     logger.info("Image: ", { image });
 
     try {
-        await updateAttachmentUrl(image.todoId, url);
+        await updateAttachmentUrl(image.userId, image.todoId, url);
     } catch (e) {
         logger.error("Error updating attachmentUrl: ", { error: e });
     }

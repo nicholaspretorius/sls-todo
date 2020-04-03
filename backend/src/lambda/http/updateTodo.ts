@@ -23,7 +23,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
 
   // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
   const userId = await getUserId(event);
-  const existingTodo = await getTodoById(todoId);
+  const existingTodo = await getTodoById(userId, todoId);
 
   if (!existingTodo) {
     return {
@@ -34,7 +34,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
 
   if (userId === existingTodo.userId) {
     try {
-      const todo = await updateTodo(todoId, updatedTodo);
+      const todo = await updateTodo(userId, todoId, updatedTodo);
 
       return {
         statusCode: 200,

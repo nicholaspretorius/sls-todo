@@ -32,6 +32,7 @@ export class TodoImagesAccess {
     async createImage(image: CreateTodoImageRequest): Promise<TodoImageItem> {
 
         const newImage = {
+            userId: image.userId,
             todoId: image.todoId,
             imageId: image.imageId,
             createdAt: new Date().toISOString(),

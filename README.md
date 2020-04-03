@@ -67,6 +67,34 @@ There is no need to deploy the application as the backend is running. However th
 * `npm i -g wscat`
 * `wscat -c wss://j2kj366hg2.execute-api.us-east-1.amazonaws.com/dev` to connect to the WebSocket
 
+*Note:*
+
+The "dev" stage is now using the TodoSls-dev DynamoDB table which has a composite key made up of userId and todoId. 
+By comparison, the original app, now on the "stg" stage is using the original Todos-stg table (which can still use the Todos-dev table)
+
+[ServiceEndpoint]9https://8vn2sm6e3d.execute-api.us-east-1.amazonaws.com/dev)
+[ServiceEndpointWebsocket](wss://j2kj366hg2.execute-api.us-east-1.amazonaws.com/dev)
+
+### Stage
+
+Currently, there are two stages: 
+
+1. /dev - linked to the "updateKeySchema" branch in Git
+2. /stg - linked to the "master" branch in Git
+
+These are not *hard* links. Either branch can deploy to either stage, this is not enforced in any way through code: 
+
+#### Stage URLs
+
+Dev: 
+
+* GET - https://8wcgjnuck7.execute-api.us-east-1.amazonaws.com/dev/todos
+* WebSockets - wss://h6jq4dh9hh.execute-api.us-east-1.amazonaws.com/dev 
+
+Stg: 
+
+* GET - https://8wcgjnuck7.execute-api.us-east-1.amazonaws.com/stg/todos
+* WebSockets - wss://h6jq4dh9hh.execute-api.us-east-1.amazonaws.com/stg 
 
 
 
